@@ -21,6 +21,72 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/activity_main">
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/backdrop_background_height"
+            android:background="@color/colorPrimaryDark"
+            android:importantForAccessibility="no"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/icon_size_image_extra_large"
+            android:layout_height="@dimen/icon_size_image_extra_large"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_cloud_download"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupDownloadOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_screen_default"
+            app:layout_constraintBottom_toTopOf="@+id/downloadButton"
+            app:layout_constraintTop_toBottomOf="@+id/view">
+
+            <RadioButton
+                android:id="@+id/radioButtonGlide"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/label_radio_glide" />
+
+            <RadioButton
+                android:id="@+id/radioButtonRepository"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/label_radio_udacity_repository" />
+
+            <RadioButton
+                android:id="@+id/radioButtonRetrofit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/label_radio_retrofit" />
+        </RadioGroup>
+
+        <com.udacity.LoadingButton
+            android:id="@+id/downloadButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_default"
+            android:layout_margin="@dimen/margin_button_default"
+            android:background="@color/cardview_dark_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

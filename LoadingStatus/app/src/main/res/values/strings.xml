@@ -12,4 +12,8 @@
     <string name="button_loading">We are loading </string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="send_message">Send message</string>
+
+    <string name="label_radio_glide">Glide - Image Loading Library by Bump Tech</string>
+    <string name="label_radio_udacity_repository">LoadApp - Current repository by Udacity</string>
+    <string name="label_radio_retrofit">Retrofit - Type-safe HTTP client for Android</string>
 </resources>
