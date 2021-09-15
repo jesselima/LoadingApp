@@ -4,13 +4,15 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.withStyledAttributes
-import com.udacity.ButtonState
 import com.udacity.R
 import kotlin.properties.Delegates
+
+private const val BUTTON_ELEVATION = 20f
 
 class LoadingButtonView @JvmOverloads constructor(
     context: Context,
@@ -18,39 +20,56 @@ class LoadingButtonView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var buttonText: String = ""
+    private var valueAnimator: ValueAnimator? = null
+
+    var isLoading = false
+    var buttonText: CharSequence = ""
+
+    private val buttonRect: RectF = RectF(0f, 0f, 0f, 0f)
     private var buttonTextColor: Int = 0
     private var buttonBackgroundColor: Int = 0
-    private var isLoading = false
 
     private var widthSize = 0
     private var heightSize = 0
 
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
         textSize = 55.0f
         typeface = Typeface.create("", Typeface.BOLD)
     }
 
-    private val valueAnimator = ValueAnimator()
+    private val paintButton = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
 
     private var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) {
-        property, oldValue, newValue ->
-            // TODO here
+        _, _, newValue ->
+            when(newValue) {
+                ButtonState.Loading -> {
+                    buttonText = ""
+                }
+               else -> {
+
+               }
+            }
     }
 
     init {
-        elevation = 20f
+        elevation = BUTTON_ELEVATION
         isClickable = true
         buttonText = resources.getString(R.string.button_name)
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             buttonBackgroundColor = getColor(R.styleable.LoadingButton_buttonBackgroundColor, 0)
+            buttonText = getText(R.styleable.LoadingButton_buttonText)
+        }.run {
+
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
+    override fun onDraw(canvas: Canvas) {
+        buttonRect.set(0f, 0f, width.toFloat(), height.toFloat())
+        canvas.drawRect(buttonRect, paintButton)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

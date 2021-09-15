@@ -1,4 +1,4 @@
-package com.udacity
+package com.udacity.widgets
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,7 +8,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import android.animation.ValueAnimator
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import com.udacity.R
 
 private const val START_ANGLE = 0.0f
 private const val END_ANGLE = 360
@@ -24,6 +26,7 @@ class CircleIndicatorView @JvmOverloads constructor(
 
     private var valueAnimator: ValueAnimator? = null
     private var currentAngle = 0
+    private var isLastLoop = false
 
     private val paint: Paint = Paint()
     private var arc: Arc? = null
@@ -47,14 +50,26 @@ class CircleIndicatorView @JvmOverloads constructor(
     fun startAnimation() {
         valueAnimator?.cancel()
         valueAnimator = ValueAnimator.ofInt(START_ANGLE.toInt(), END_ANGLE).apply {
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.RESTART
             duration = CIRCLE_LOADING_DURATION
-            interpolator = LinearInterpolator()
+            interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 currentAngle = animator.animatedValue as Int
                 invalidate()
             }
         }
         valueAnimator?.start()
+     }
+
+    fun stopAnimation() {
+        valueAnimator?.end()
+        valueAnimator?.removeAllListeners()
+        invalidate()
+    }
+
+    fun setLastAnimationLoop() {
+        isLastLoop = true
     }
 
     override fun onDraw(canvas: Canvas) {
