@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import com.udacity.data.RequestProviderType
 import com.udacity.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
