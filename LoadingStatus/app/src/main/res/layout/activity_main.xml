@@ -77,7 +77,7 @@
                 android:text="@string/label_radio_retrofit" />
         </RadioGroup>
 
-        <com.udacity.LoadingButton
+        <com.udacity.widgets.LoadingButtonView
             android:id="@+id/downloadButton"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_default"
@@ -86,6 +86,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <com.udacity.widgets.CircleIndicatorView
+            android:id="@+id/circleLoadingIndicator"
+            android:layout_width="@dimen/default_circle_loading_size"
+            android:layout_height="@dimen/default_circle_loading_size"
+            android:layout_marginEnd="@dimen/space_medium"
+            android:background="@color/transparent"
+            app:layout_constraintBottom_toBottomOf="@+id/downloadButton"
+            app:layout_constraintEnd_toEndOf="@+id/downloadButton"
+            app:layout_constraintTop_toTopOf="@+id/downloadButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
