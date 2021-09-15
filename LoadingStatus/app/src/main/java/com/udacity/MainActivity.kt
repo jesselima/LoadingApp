@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
@@ -24,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var action: NotificationCompat.Action
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel = MainViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +33,33 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         setupListeners()
+        setupObservers()
     }
 
     private fun setupListeners() {
         binding.downloadButton.setOnClickListener {
-            resolveDownloadType()
+            if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.message_alert_select_download_type),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                resolveDownloadType()
+            }
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.state.observe(this, { state ->
+            if (state.isLoading) {
+                binding.circleLoadingIndicator.startAnimation()
+            } else {
+                binding.circleLoadingIndicator.stopAnimation()
+            }
+            binding.downloadButton.isLoading = state.isLoading
+            binding.downloadButton.buttonText = getString(state.buttonText)
+        })
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -48,21 +69,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resolveDownloadType() {
-        when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
-            R.id.radioButtonGlide -> {
-                showLoading()
-                Toast.makeText(this, "radioButtonGlide is selected!!", Toast.LENGTH_SHORT).show()
-            }
-            R.id.radioButtonRepository -> {
-                Toast.makeText(this, "radioButtonRepository is selected!!", Toast.LENGTH_SHORT).show()
-            }
-            R.id.radioButtonRetrofit -> {
-                Toast.makeText(this, "radioButtonRetrofit is selected!!", Toast.LENGTH_SHORT).show()
-            }
-            View.NO_ID -> {
-                Toast.makeText(this, "Please, select a file to download ", Toast.LENGTH_SHORT).show()
+        val requestType = when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
+            R.id.radioButtonGlide -> RequestProviderType.GLIDE
+            R.id.radioButtonRepository -> RequestProviderType.DOWNLOAD_MANAGER
+            R.id.radioButtonRetrofit -> RequestProviderType.RETROFIT
+            else -> {
+                RequestProviderType.DOWNLOAD_MANAGER
             }
         }
+        viewModel.onActionButtonClicked(requestProviderType = requestType)
     }
 
     private fun download() {
