@@ -19,7 +19,6 @@ import com.udacity.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
-
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
@@ -28,15 +27,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-
         setupListeners()
     }
 
@@ -55,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private fun resolveDownloadType() {
         when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
             R.id.radioButtonGlide -> {
+                showLoading()
                 Toast.makeText(this, "radioButtonGlide is selected!!", Toast.LENGTH_SHORT).show()
             }
             R.id.radioButtonRepository -> {

@@ -84,3 +84,5 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+/app/src/main/java/com/udacity/widgets/drafts/DialView.kt
+/app/src/main/java/com/udacity/widgets/drafts/FanSpeed.kt
