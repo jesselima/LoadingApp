@@ -61,14 +61,12 @@ class LoadingButtonView @JvmOverloads constructor(
         buttonText = resources.getString(R.string.button_name)
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             buttonBackgroundColor = getColor(R.styleable.LoadingButton_buttonBackgroundColor, 0)
-            buttonText = getText(R.styleable.LoadingButton_buttonText)
-        }.run {
-
         }
     }
 
     override fun onDraw(canvas: Canvas) {
-        buttonRect.set(0f, 0f, width.toFloat(), height.toFloat())
+        // Update the "third param" value to set progress
+        buttonRect.set(0f, 0f, width.toFloat() / 2, height.toFloat())
         canvas.drawRect(buttonRect, paintButton)
     }
 
