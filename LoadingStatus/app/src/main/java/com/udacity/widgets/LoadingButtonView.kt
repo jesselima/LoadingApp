@@ -18,7 +18,6 @@ private const val START_LEFT = 0f
 private const val START_TOP = 0f
 private const val START_RIGHT = 0f
 private const val START_BOTTOM = 0f
-private const val LOADING_PROGRESS_REFERENCE = 360
 private const val LOADING_DURATION = 4000L
 
 class LoadingButtonView @JvmOverloads constructor(
@@ -27,15 +26,12 @@ class LoadingButtonView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var buttonText: CharSequence = ""
+    private var buttonTextColor: Int = 0
+    private var buttonBackgroundColor: Int = 0
     private var valueAnimator: ValueAnimator? = null
     private val buttonRect: RectF = RectF(START_LEFT, START_TOP, START_RIGHT, START_BOTTOM)
     private var currentProgress = 0
-
-    var isLoading = false
-    var buttonText: CharSequence = ""
-
-    private var buttonTextColor: Int = 0
-    private var buttonBackgroundColor: Int = 0
 
     private var widthSize = 0
     private var heightSize = 0
@@ -51,12 +47,12 @@ class LoadingButtonView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    private var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) {
+    var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) {
         _, _, newValue ->
             when(newValue) {
                 ButtonState.Loading -> {
                     startAnimation()
-                    buttonText = ""
+                    buttonText = "Loading"
                 }
                else -> {
 
@@ -108,6 +104,7 @@ class LoadingButtonView @JvmOverloads constructor(
 
     fun stopAnimation() {
         valueAnimator?.end()
+        valueAnimator?.removeAllListeners()
+        invalidate()
     }
-
 }

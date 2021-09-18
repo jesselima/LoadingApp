@@ -26,6 +26,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel = MainViewModel()
 
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -60,15 +67,7 @@ class MainActivity : AppCompatActivity() {
                 binding.circleLoadingIndicator.stopAnimation()
                 binding.loadingButtonView.stopAnimation()
             }
-//            binding.loadingButtonView.isLoading = state.isLoading
-//            binding.loadingButtonView.buttonText = getString(state.buttonText)
         })
-    }
-
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        }
     }
 
     private fun resolveDownloadType() {
@@ -92,8 +91,8 @@ class MainActivity : AppCompatActivity() {
                 .setAllowedOverRoaming(true)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        // enqueue puts the download request in the queue.
+        downloadID = downloadManager.enqueue(request)
     }
 
     companion object {

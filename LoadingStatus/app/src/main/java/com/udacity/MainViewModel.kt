@@ -35,10 +35,10 @@ class MainViewModel: ViewModel() {
         viewModelScope.launch {
             runCatching {
                 withContext(dispatchers) {
-                    delay(3000)
+                    delay(5000)
                 }
             }.onSuccess {
-                //_state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }
@@ -49,10 +49,10 @@ class MainViewModel: ViewModel() {
         viewModelScope.launch {
             runCatching {
                 withContext(dispatchers) {
-                    delay(3000)
+                    delay(5000)
                 }
             }.onSuccess {
-                //_state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }
@@ -63,10 +63,10 @@ class MainViewModel: ViewModel() {
         viewModelScope.launch {
             runCatching {
                 withContext(dispatchers) {
-                    delay(3000)
+                    delay(5000)
                 }
             }.onSuccess {
-                //_state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }

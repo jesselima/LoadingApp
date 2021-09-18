@@ -25,10 +25,7 @@ class CircleIndicatorView @JvmOverloads constructor(
 
     private var arc: Arc? = null
     private var valueAnimator: ValueAnimator? = null
-
     private var currentAngle = 0
-    private var isLastLoop = false
-
     private val paintCircleLoadingView: Paint = Paint()
 
     init {
@@ -61,10 +58,6 @@ class CircleIndicatorView @JvmOverloads constructor(
         valueAnimator?.end()
         valueAnimator?.removeAllListeners()
         invalidate()
-    }
-
-    fun setLastAnimationLoop() {
-        isLastLoop = true
     }
 
     override fun onDraw(canvas: Canvas) {
