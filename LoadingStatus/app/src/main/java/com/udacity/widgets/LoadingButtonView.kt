@@ -8,11 +8,18 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.withStyledAttributes
 import com.udacity.R
 import kotlin.properties.Delegates
 
 private const val BUTTON_ELEVATION = 20f
+private const val START_LEFT = 0f
+private const val START_TOP = 0f
+private const val START_RIGHT = 0f
+private const val START_BOTTOM = 0f
+private const val LOADING_PROGRESS_REFERENCE = 360
+private const val LOADING_DURATION = 4000L
 
 class LoadingButtonView @JvmOverloads constructor(
     context: Context,
@@ -21,11 +28,12 @@ class LoadingButtonView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private var valueAnimator: ValueAnimator? = null
+    private val buttonRect: RectF = RectF(START_LEFT, START_TOP, START_RIGHT, START_BOTTOM)
+    private var currentProgress = 0
 
     var isLoading = false
     var buttonText: CharSequence = ""
 
-    private val buttonRect: RectF = RectF(0f, 0f, 0f, 0f)
     private var buttonTextColor: Int = 0
     private var buttonBackgroundColor: Int = 0
 
@@ -47,6 +55,7 @@ class LoadingButtonView @JvmOverloads constructor(
         _, _, newValue ->
             when(newValue) {
                 ButtonState.Loading -> {
+                    startAnimation()
                     buttonText = ""
                 }
                else -> {
@@ -65,8 +74,7 @@ class LoadingButtonView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        // Update the "third param" value to set progress
-        buttonRect.set(0f, 0f, width.toFloat() / 2, height.toFloat())
+        buttonRect.set(0f, 0f, currentProgress.toFloat(), height.toFloat())
         canvas.drawRect(buttonRect, paintButton)
     }
 
@@ -82,4 +90,24 @@ class LoadingButtonView @JvmOverloads constructor(
         heightSize = height
         setMeasuredDimension(width, height)
     }
+
+    fun startAnimation() {
+        valueAnimator?.cancel()
+        valueAnimator = ValueAnimator.ofInt(START_LEFT.toInt(), width).apply {
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.RESTART
+            duration = LOADING_DURATION
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
+                currentProgress = animator.animatedValue as Int
+                invalidate()
+            }
+        }
+        valueAnimator?.start()
+    }
+
+    fun stopAnimation() {
+        valueAnimator?.end()
+    }
+
 }

@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.downloadButton.setOnClickListener {
+        binding.loadingButtonView.setOnClickListener {
             if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
                 Toast.makeText(
                     this,
@@ -55,11 +55,13 @@ class MainActivity : AppCompatActivity() {
         viewModel.state.observe(this, { state ->
             if (state.isLoading) {
                 binding.circleLoadingIndicator.startAnimation()
+                binding.loadingButtonView.startAnimation()
             } else {
                 binding.circleLoadingIndicator.stopAnimation()
+                binding.loadingButtonView.stopAnimation()
             }
-            binding.downloadButton.isLoading = state.isLoading
-            binding.downloadButton.buttonText = getString(state.buttonText)
+//            binding.loadingButtonView.isLoading = state.isLoading
+//            binding.loadingButtonView.buttonText = getString(state.buttonText)
         })
     }
 

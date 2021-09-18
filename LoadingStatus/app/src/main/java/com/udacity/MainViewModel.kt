@@ -38,7 +38,7 @@ class MainViewModel: ViewModel() {
                     delay(3000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                //_state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }
@@ -52,7 +52,7 @@ class MainViewModel: ViewModel() {
                     delay(3000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                //_state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }
@@ -66,7 +66,7 @@ class MainViewModel: ViewModel() {
                     delay(3000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                //_state.value = state.value?.copy(isLoading = false)
             }.onFailure {
 
             }

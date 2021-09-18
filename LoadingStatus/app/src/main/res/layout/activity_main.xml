@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space_screen_default"
-            app:layout_constraintBottom_toTopOf="@+id/downloadButton"
+            app:layout_constraintBottom_toTopOf="@+id/loadingButtonView"
             app:layout_constraintTop_toBottomOf="@+id/view">
 
             <RadioButton
@@ -78,7 +78,7 @@
         </RadioGroup>
 
         <com.udacity.widgets.LoadingButtonView
-            android:id="@+id/downloadButton"
+            android:id="@+id/loadingButtonView"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_default"
             android:layout_margin="@dimen/margin_button_default"
@@ -93,9 +93,9 @@
             android:layout_height="@dimen/default_circle_loading_size"
             android:layout_marginEnd="@dimen/space_medium"
             android:background="@color/transparent"
-            app:layout_constraintBottom_toBottomOf="@+id/downloadButton"
-            app:layout_constraintEnd_toEndOf="@+id/downloadButton"
-            app:layout_constraintTop_toTopOf="@+id/downloadButton" />
+            app:layout_constraintBottom_toBottomOf="@+id/loadingButtonView"
+            app:layout_constraintEnd_toEndOf="@+id/loadingButtonView"
+            app:layout_constraintTop_toTopOf="@+id/loadingButtonView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
