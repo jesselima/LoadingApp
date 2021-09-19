@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.data.RequestProviderType
 import com.udacity.databinding.ActivityMainBinding
+import com.udacity.widgets.ButtonState
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+
         binding.loadingButtonView.setOnClickListener {
             if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
                 Toast.makeText(
@@ -56,21 +58,35 @@ class MainActivity : AppCompatActivity() {
                 resolveDownloadType()
             }
         }
+
+        binding.radioGroupDownloadOptions.setOnCheckedChangeListener { _, checkedId ->
+            when(checkedId) {
+                R.id.radioButtonGlide, R.id.radioButtonRepository, R.id.radioButtonRetrofit -> {
+                    binding.loadingButtonView.buttonState = ButtonState.IdleState
+                    binding.loadingButtonView.buttonText = getString( R.string.button_text_download)
+                }
+                else -> {
+                    binding.loadingButtonView.buttonState = ButtonState.IdleState
+                    binding.loadingButtonView.buttonText = getString(R.string.button_text_idle)
+                }
+            }
+        }
     }
 
     private fun setupObservers() {
         viewModel.state.observe(this, { state ->
-            if (state.isLoading) {
+            if (state.buttonState == ButtonState.Loading) {
                 binding.circleLoadingIndicator.startAnimation()
-                binding.loadingButtonView.startAnimation()
             } else {
                 binding.circleLoadingIndicator.stopAnimation()
-                binding.loadingButtonView.stopAnimation()
             }
+            binding.loadingButtonView.buttonState = state.buttonState
+            binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
         })
     }
 
     private fun resolveDownloadType() {
+        binding.loadingButtonView.buttonState = ButtonState.Loading
         val requestType = when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
             R.id.radioButtonGlide -> RequestProviderType.GLIDE
             R.id.radioButtonRepository -> RequestProviderType.DOWNLOAD_MANAGER

@@ -2,7 +2,8 @@ package com.udacity.widgets
 
 
 sealed class ButtonState {
-    object Clicked : ButtonState()
+    object IdleState : ButtonState()
     object Loading : ButtonState()
-    object Completed : ButtonState()
+    object Error : ButtonState()
+    object Success : ButtonState()
 }

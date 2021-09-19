@@ -26,7 +26,8 @@ class LoadingButtonView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var buttonText: CharSequence = ""
+    var buttonText: CharSequence = ""
+
     private var buttonTextColor: Int = 0
     private var buttonBackgroundColor: Int = 0
     private var valueAnimator: ValueAnimator? = null
@@ -39,6 +40,7 @@ class LoadingButtonView @JvmOverloads constructor(
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
+        color = resources.getColor(R.color.colorAccent)
         textSize = 55.0f
         typeface = Typeface.create("", Typeface.BOLD)
     }
@@ -47,23 +49,22 @@ class LoadingButtonView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) {
+    var buttonState: ButtonState by Delegates.observable(ButtonState.IdleState) {
         _, _, newValue ->
             when(newValue) {
                 ButtonState.Loading -> {
                     startAnimation()
-                    buttonText = "Loading"
                 }
-               else -> {
-
-               }
+                ButtonState.IdleState, ButtonState.Success, ButtonState.Error -> {
+                    stopAnimation()
+                }
             }
     }
 
     init {
         elevation = BUTTON_ELEVATION
         isClickable = true
-        buttonText = resources.getString(R.string.button_name)
+        buttonText = resources.getString(R.string.labels_button_download)
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             buttonBackgroundColor = getColor(R.styleable.LoadingButton_buttonBackgroundColor, 0)
         }
@@ -72,6 +73,12 @@ class LoadingButtonView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         buttonRect.set(0f, 0f, currentProgress.toFloat(), height.toFloat())
         canvas.drawRect(buttonRect, paintButton)
+        canvas.drawText(
+            buttonText.toString(),
+            width.toFloat() /2 ,
+            height.toFloat() / 1.5f,
+            paintText
+        )
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -87,7 +94,7 @@ class LoadingButtonView @JvmOverloads constructor(
         setMeasuredDimension(width, height)
     }
 
-    fun startAnimation() {
+    private fun startAnimation() {
         valueAnimator?.cancel()
         valueAnimator = ValueAnimator.ofInt(START_LEFT.toInt(), width).apply {
             repeatCount = ValueAnimator.INFINITE
@@ -96,13 +103,14 @@ class LoadingButtonView @JvmOverloads constructor(
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 currentProgress = animator.animatedValue as Int
+                // Todo Append dots to button text when loading
                 invalidate()
             }
         }
         valueAnimator?.start()
     }
 
-    fun stopAnimation() {
+    private fun stopAnimation() {
         valueAnimator?.end()
         valueAnimator?.removeAllListeners()
         invalidate()

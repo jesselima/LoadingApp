@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.data.RequestProviderType
+import com.udacity.widgets.ButtonState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,7 +24,10 @@ class MainViewModel: ViewModel() {
     }
 
     fun onActionButtonClicked(requestProviderType: RequestProviderType) {
-        _state.value = state.value?.copy(isLoading = true)
+        _state.value = state.value?.copy(
+            buttonTextResId = R.string.button_text_loading,
+            buttonState = ButtonState.Loading
+        )
         when (requestProviderType) {
             RequestProviderType.RETROFIT -> getDataWithRetrofit()
             RequestProviderType.DOWNLOAD_MANAGER -> getDataWithDownloadManager()
@@ -38,9 +42,15 @@ class MainViewModel: ViewModel() {
                     delay(5000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_completed,
+                    buttonState = ButtonState.Success
+                )
             }.onFailure {
-
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_error,
+                    buttonState = ButtonState.Error
+                )
             }
         }
     }
@@ -52,9 +62,15 @@ class MainViewModel: ViewModel() {
                     delay(5000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_completed,
+                    buttonState = ButtonState.Success
+                )
             }.onFailure {
-
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_error,
+                    buttonState = ButtonState.Error
+                )
             }
         }
     }
@@ -66,9 +82,15 @@ class MainViewModel: ViewModel() {
                     delay(5000)
                 }
             }.onSuccess {
-                _state.value = state.value?.copy(isLoading = false)
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_completed,
+                    buttonState = ButtonState.Success
+                )
             }.onFailure {
-
+                _state.value = state.value?.copy(
+                    buttonTextResId = R.string.button_text_error,
+                    buttonState = ButtonState.Error
+                )
             }
         }
     }
