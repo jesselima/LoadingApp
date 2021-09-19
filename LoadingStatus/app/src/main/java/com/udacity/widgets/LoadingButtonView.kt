@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import com.udacity.R
 import kotlin.properties.Delegates
@@ -40,7 +41,7 @@ class LoadingButtonView @JvmOverloads constructor(
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
-        color = resources.getColor(R.color.colorAccent)
+        color = ContextCompat.getColor(context, R.color.colorAccent)
         textSize = 55.0f
         typeface = Typeface.create("", Typeface.BOLD)
     }
@@ -103,7 +104,6 @@ class LoadingButtonView @JvmOverloads constructor(
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 currentProgress = animator.animatedValue as Int
-                // Todo Append dots to button text when loading
                 invalidate()
             }
         }

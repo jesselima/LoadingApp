@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.udacity.data.RequestProviderType
+import com.udacity.data.DataProviderType
 import com.udacity.widgets.ButtonState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -23,15 +23,15 @@ class MainViewModel: ViewModel() {
         _state.value = MainState()
     }
 
-    fun onActionButtonClicked(requestProviderType: RequestProviderType) {
+    fun onActionButtonClicked(dataProviderType: DataProviderType) {
         _state.value = state.value?.copy(
             buttonTextResId = R.string.button_text_loading,
             buttonState = ButtonState.Loading
         )
-        when (requestProviderType) {
-            RequestProviderType.RETROFIT -> getDataWithRetrofit()
-            RequestProviderType.DOWNLOAD_MANAGER -> getDataWithDownloadManager()
-            RequestProviderType.GLIDE -> getDataWithGlide()
+        when (dataProviderType) {
+            DataProviderType.RETROFIT -> getDataWithRetrofit()
+            DataProviderType.DOWNLOAD_MANAGER -> getDataWithDownloadManager()
+            DataProviderType.GLIDE -> getDataWithGlide()
         }
     }
 

@@ -13,9 +13,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import com.udacity.data.RequestProviderType
+import com.udacity.data.DataProviderType
 import com.udacity.databinding.ActivityMainBinding
+import com.udacity.extensions.showOrUpdateNotification
+import com.udacity.extensions.startDefaultNotificationChannel
 import com.udacity.widgets.ButtonState
+
+private const val NOTIFICATION_ID = 4337584
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,9 +44,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         setupListeners()
         setupObservers()
+
+        registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        startDefaultNotificationChannel()
     }
 
     private fun setupListeners() {
@@ -73,6 +79,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun sendNotification() {
+        showOrUpdateNotification(
+            notificationId = NOTIFICATION_ID,
+            title = "Udacity Nanodegree Android Kotlin",
+            text = "Some text"
+        )
+    }
+
     private fun setupObservers() {
         viewModel.state.observe(this, { state ->
             if (state.buttonState == ButtonState.Loading) {
@@ -88,14 +102,14 @@ class MainActivity : AppCompatActivity() {
     private fun resolveDownloadType() {
         binding.loadingButtonView.buttonState = ButtonState.Loading
         val requestType = when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
-            R.id.radioButtonGlide -> RequestProviderType.GLIDE
-            R.id.radioButtonRepository -> RequestProviderType.DOWNLOAD_MANAGER
-            R.id.radioButtonRetrofit -> RequestProviderType.RETROFIT
+            R.id.radioButtonGlide -> DataProviderType.GLIDE
+            R.id.radioButtonRepository -> DataProviderType.DOWNLOAD_MANAGER
+            R.id.radioButtonRetrofit -> DataProviderType.RETROFIT
             else -> {
-                RequestProviderType.DOWNLOAD_MANAGER
+                DataProviderType.DOWNLOAD_MANAGER
             }
         }
-        viewModel.onActionButtonClicked(requestProviderType = requestType)
+        viewModel.onActionButtonClicked(dataProviderType = requestType)
     }
 
     private fun download() {
