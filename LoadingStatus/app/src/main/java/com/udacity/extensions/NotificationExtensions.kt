@@ -48,7 +48,8 @@ fun AppCompatActivity.showOrUpdateNotification(
     text: String,
     channelId: String = "MAIN",
     shouldLaunchIntent: Boolean = true,
-    shouldIntentNewTask: Boolean = false
+    shouldIntentNewTask: Boolean = false,
+    shouldTrackProgress: Boolean = false
 ) {
 
     with(NotificationManagerCompat.from(this)) {
@@ -75,11 +76,14 @@ fun AppCompatActivity.showOrUpdateNotification(
                 setContentIntent(pendingIntent)
                 addAction(
                     R.drawable.ic_assistant,
-                    getString(R.string.notification_text_check_status),
+                    getString(R.string.notification_button),
                     pendingIntent
                 )
             }
-
+            if (shouldTrackProgress) {
+                setProgress(0, 0, true)
+                setContentText(getString(R.string.notification_download_in_progress))
+            }
         }.build()
 
         notify(notificationId, notification)

@@ -9,11 +9,10 @@
     <string name="button_text_idle">Select an option</string>
     <string name="button_text_download">Download</string>
 
-    <string name="notification_text_check_status">Check status</string>
-
     <string name="notification_title">Udacity: Android Kotlin Nanodegree </string>
     <string name="notification_description">The Project 3 repository is downloaded</string>
     <string name="notification_button">See changes</string>
+    <string name="notification_download_in_progress">Download in progress</string>
 
     <string name="labels_button_download">Download</string>
     <string name="button_loading">We are loading </string>

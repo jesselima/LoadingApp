@@ -79,23 +79,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun sendNotification() {
-        showOrUpdateNotification(
-            notificationId = NOTIFICATION_ID,
-            title = "Udacity Nanodegree Android Kotlin",
-            text = "Some text"
-        )
-    }
-
     private fun setupObservers() {
         viewModel.state.observe(this, { state ->
             if (state.buttonState == ButtonState.Loading) {
                 binding.circleLoadingIndicator.startAnimation()
+                showOrUpdateNotification(
+                    notificationId = NOTIFICATION_ID,
+                    title = getString(R.string.notification_title),
+                    text = getString(R.string.notification_download_in_progress),
+                    shouldTrackProgress = true,
+                )
             } else {
                 binding.circleLoadingIndicator.stopAnimation()
             }
             binding.loadingButtonView.buttonState = state.buttonState
             binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
+            if (state.buttonState == ButtonState.Success) {
+                showOrUpdateNotification(
+                    notificationId = NOTIFICATION_ID,
+                    title = getString(R.string.notification_title),
+                    text = getString(R.string.notification_description)
+                )
+            }
         })
     }
 
