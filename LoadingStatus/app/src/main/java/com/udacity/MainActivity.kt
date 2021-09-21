@@ -1,8 +1,6 @@
 package com.udacity
 
 import android.app.DownloadManager
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,11 +8,11 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import com.udacity.data.DataProviderType
 import com.udacity.databinding.ActivityMainBinding
+import com.udacity.extensions.ToastType
+import com.udacity.extensions.showCustomToast
 import com.udacity.extensions.showOrUpdateNotification
 import com.udacity.extensions.startDefaultNotificationChannel
 import com.udacity.widgets.ButtonState
@@ -23,14 +21,10 @@ private const val NOTIFICATION_ID = 4337584
 
 class MainActivity : AppCompatActivity() {
 
-    private var downloadID: Long = 0
-    private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
-
     private lateinit var binding: ActivityMainBinding
     private val viewModel = MainViewModel()
 
+    private var downloadID: Long = 0
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -55,11 +49,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.loadingButtonView.setOnClickListener {
             if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.message_alert_select_download_type),
-                    Toast.LENGTH_SHORT
-                ).show()
+                applicationContext?.showCustomToast(
+                    toastType = ToastType.INFO,
+                    R.string.message_alert_select_download_type
+                )
             } else {
                 resolveDownloadType()
             }
@@ -95,6 +88,7 @@ class MainActivity : AppCompatActivity() {
             binding.loadingButtonView.buttonState = state.buttonState
             binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
             if (state.buttonState == ButtonState.Success) {
+                applicationContext?.showCustomToast(stringResId = R.string.text_download_success)
                 showOrUpdateNotification(
                     notificationId = NOTIFICATION_ID,
                     title = getString(R.string.notification_title),
@@ -135,5 +129,4 @@ class MainActivity : AppCompatActivity() {
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val CHANNEL_ID = "channelId"
     }
-
 }

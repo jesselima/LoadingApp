@@ -9,6 +9,9 @@
     <string name="button_text_idle">Select an option</string>
     <string name="button_text_download">Download</string>
 
+    <string name="toast_text_success">Success</string>
+    <string name="text_download_success">Download success</string>
+
     <string name="notification_title">Udacity: Android Kotlin Nanodegree </string>
     <string name="notification_description">The Project 3 repository is downloaded</string>
     <string name="notification_button">See changes</string>

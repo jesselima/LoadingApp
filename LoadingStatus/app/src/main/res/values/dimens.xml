@@ -9,4 +9,10 @@
     <dimen name="button_default">60dp</dimen>
     <dimen name="default_circle_loading_size">40dp</dimen>
     <dimen name="space_medium">24dp</dimen>
+    <dimen name="default_icon_size">40dp</dimen>
+    <dimen name="spacing_tiny">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">20dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
 </resources>

@@ -6,4 +6,5 @@
     <color name="white">#FFFFFF</color>
     <color name="purple">#8859DC</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="background_light_gray">#4D4D4D</color>
 </resources>
