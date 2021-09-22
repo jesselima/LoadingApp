@@ -4,23 +4,28 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.udacity.core.connectionchecker.ConnectionChecker
 import com.udacity.data.DataProviderType
 import com.udacity.widgets.ButtonState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
-class MainViewModel: ViewModel() {
-
-    private val dispatchers = Dispatchers.IO
+class MainViewModel(
+    private val dispatchers: CoroutineDispatcher,
+    connectionChecker: ConnectionChecker
+): ViewModel() {
 
     private val _state = MutableLiveData<MainState>()
     val state: LiveData<MainState> = _state
 
     init {
         _state.value = MainState()
+        if(connectionChecker.isConnected().not()) {
+            _state.value = state.value?.copy(
+                buttonTextResId = R.string.message_connection_error,
+                buttonState = ButtonState.Error
+            )
+        }
     }
 
     fun onActionButtonClicked(dataProviderType: DataProviderType) {
