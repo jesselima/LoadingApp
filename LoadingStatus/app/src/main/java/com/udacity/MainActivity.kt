@@ -16,13 +16,14 @@ import com.udacity.extensions.showCustomToast
 import com.udacity.extensions.showOrUpdateNotification
 import com.udacity.extensions.startDefaultNotificationChannel
 import com.udacity.widgets.ButtonState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val NOTIFICATION_ID = 4337584
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModel()
 
     private var downloadID: Long = 0
 
@@ -42,14 +43,14 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        startDefaultNotificationChannel()
+        applicationContext?.startDefaultNotificationChannel()
     }
 
     private fun setupListeners() {
 
         binding.loadingButtonView.setOnClickListener {
             if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
-                applicationContext?.showCustomToast(
+                showCustomToast(
                     toastType = ToastType.INFO,
                     R.string.message_alert_select_download_type
                 )
@@ -87,8 +88,9 @@ class MainActivity : AppCompatActivity() {
             }
             binding.loadingButtonView.buttonState = state.buttonState
             binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
+
             if (state.buttonState == ButtonState.Success) {
-                applicationContext?.showCustomToast(stringResId = R.string.text_download_success)
+                showCustomToast(stringResId = R.string.text_download_success)
                 showOrUpdateNotification(
                     notificationId = NOTIFICATION_ID,
                     title = getString(R.string.notification_title),
@@ -112,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        val request = DownloadManager.Request(Uri.parse(URL))
+        val request = DownloadManager.Request(Uri.parse(BuildConfig.DOWNLOAD_URL))
                 .setTitle(getString(R.string.app_name))
                 .setDescription(getString(R.string.app_description))
                 .setRequiresCharging(false)
@@ -122,11 +124,5 @@ class MainActivity : AppCompatActivity() {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         // enqueue puts the download request in the queue.
         downloadID = downloadManager.enqueue(request)
-    }
-
-    companion object {
-        private const val URL =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
-        private const val CHANNEL_ID = "channelId"
     }
 }
