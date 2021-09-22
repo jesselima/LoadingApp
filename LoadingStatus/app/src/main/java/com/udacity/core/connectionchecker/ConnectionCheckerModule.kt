@@ -1,5 +1,6 @@
 package com.udacity.core.connectionchecker
 
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 
 object ConnectionCheckerModule {
@@ -8,5 +9,5 @@ object ConnectionCheckerModule {
             ConnectionCheckerImpl(context = get())
         }
     }
-    fun load() = connectionCheckerModule
+    fun load() = loadKoinModules(connectionCheckerModule)
 }
