@@ -1,5 +1,8 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.secrets_gradle_plugin' version '0.4'
+}
 
 android {
     compileSdkVersion 30
@@ -51,10 +54,10 @@ dependencies {
 
     implementation "com.airbnb.android:lottie:$version_lottie"
 
-    // Koin for Dependency Injection
-//    implementation "org.koin:koin-core:$version_koin"
-//    implementation "org.koin:koin-android:$version_koin"
-//    implementation "org.koin:koin-androidx-viewmodel:$version_koin"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$version_koin"
+    // Koin Java Compatibility
+    implementation "io.insert-koin:koin-android-compat:$version_koin"
 
     implementation "com.github.bumptech.glide:glide:$version_glide"
     annotationProcessor "com.github.bumptech.glide:compiler:$version_glide"

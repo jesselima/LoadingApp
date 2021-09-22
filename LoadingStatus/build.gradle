@@ -33,7 +33,7 @@ buildscript {
 
         version_room = '2.2.6'
         version_lifecycle = '2.2.0'
-        //version_koin = '2.0.1'
+        version_koin = '3.1.2'
     }
 }
 
