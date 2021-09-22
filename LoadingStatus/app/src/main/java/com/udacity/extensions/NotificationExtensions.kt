@@ -20,7 +20,7 @@ import com.udacity.R
  * Because you must create the notification channel before posting any notifications on
  * Android 8.0 and higher, you should execute this code as soon as your app starts.
  */
-fun AppCompatActivity.startDefaultNotificationChannel(
+fun Context.startDefaultNotificationChannel(
     channels: List<Triple<String, String, String>> = listOf(
         Triple("MAIN", "The main app channel", "Used as default")
     ),
@@ -42,7 +42,7 @@ fun AppCompatActivity.startDefaultNotificationChannel(
     }
 }
 
-fun AppCompatActivity.showOrUpdateNotification(
+fun Context.showOrUpdateNotification(
     notificationId: Int,
     title: String,
     text: String,
@@ -90,7 +90,7 @@ fun AppCompatActivity.showOrUpdateNotification(
     }
 }
 
-fun AppCompatActivity.buildNotificationManager(
+fun Context.buildNotificationManager(
     channelId: String,
     shouldAutoCancel: Boolean = true,
     shouldAlertOnlyOnce: Boolean = true,
@@ -110,14 +110,14 @@ fun AppCompatActivity.buildNotificationManager(
     }
 }
 
-fun AppCompatActivity.removeNotification(notificationId: Int) {
+fun Context.removeNotification(notificationId: Int) {
     with(NotificationManagerCompat.from(this)) {
         /** Cancel a specific notification by its ID. Also deletes ongoing notifications. */
         cancel(notificationId)
     }
 }
 
-fun AppCompatActivity.removeAllNotifications() {
+fun Context.removeAllNotifications() {
     with(NotificationManagerCompat.from(this)) {
         /** Removes all of the notifications you previously issued. */
         cancelAll()
