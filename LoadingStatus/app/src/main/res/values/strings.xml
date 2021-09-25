@@ -3,7 +3,7 @@
     <string name="app_description">Download files from Internet</string>
     <string name="action_settings">Settings</string>
 
-    <string name="button_text_loading">Loading…</string>
+    <string name="button_text_loading">We are loading…</string>
     <string name="button_text_completed">Completed</string>
     <string name="button_text_error">Ooops!</string>
     <string name="button_text_idle">Select an option</string>
@@ -26,5 +26,5 @@
     <string name="label_radio_glide">Glide - Image Loading Library by Bump Tech</string>
     <string name="label_radio_udacity_repository">LoadApp - Current repository by Udacity</string>
     <string name="label_radio_retrofit">Retrofit - Type-safe HTTP client for Android</string>
-    <string name="message_alert_select_download_type">"Please, select a download type"</string>
+    <string name="message_alert_select_download_type">Please, select a file to download</string>
 </resources>

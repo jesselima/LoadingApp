@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="@dimen/spacing_sm"
     android:background="@drawable/layout_background">
 
     <ImageView
@@ -19,6 +19,7 @@
         android:id="@+id/toastText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:textColor="@color/background_light_gray"
         android:layout_gravity="center"
         android:layout_marginEnd="@dimen/spacing_tiny"/>
