@@ -14,7 +14,8 @@ private const val TOAST_X_OFF_SET = 0
 
 fun Context.showCustomToast(
     toastType: ToastType = ToastType.SUCCESS,
-    stringResId: Int = R.string.toast_text_success
+    stringResId: Int = R.string.toast_text_success,
+    durationToast: Int = Toast.LENGTH_SHORT
 ) {
 
     val binding = CustomToastBinding.inflate(LayoutInflater.from(this))
@@ -33,7 +34,7 @@ fun Context.showCustomToast(
 
     with (Toast(applicationContext)) {
         setGravity(Gravity.BOTTOM, TOAST_X_OFF_SET, TOAST_Y_OFF_SET)
-        duration = Toast.LENGTH_LONG
+        duration = durationToast
         view = binding.root
         show()
     }
