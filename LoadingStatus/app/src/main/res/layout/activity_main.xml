@@ -68,13 +68,19 @@
                 android:id="@+id/radioButtonRepository"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/label_radio_udacity_repository" />
+                android:text="@string/label_radio_load_app_repository" />
 
             <RadioButton
                 android:id="@+id/radioButtonRetrofit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/label_radio_retrofit" />
+
+            <RadioButton
+                android:id="@+id/radioButtonSampleVideo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/label_video_description" />
         </RadioGroup>
 
         <com.udacity.widgets.LoadingButtonView

@@ -1,14 +1,19 @@
 package com.udacity.extensions
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.os.bundleOf
 import com.udacity.DetailActivity
 import com.udacity.R
 
@@ -42,6 +47,7 @@ fun Context.startDefaultNotificationChannel(
     }
 }
 
+@SuppressLint("UnspecifiedImmutableFlag")
 fun Context.showOrUpdateNotification(
     notificationId: Int,
     title: String,
@@ -49,14 +55,18 @@ fun Context.showOrUpdateNotification(
     channelId: String = "MAIN",
     shouldLaunchIntent: Boolean = true,
     shouldIntentNewTask: Boolean = false,
-    shouldTrackProgress: Boolean = false
+    shouldTrackProgress: Boolean = false,
+    actionLabelText: String? = null,
+    contentText: String? = null,
+    @DrawableRes actionDrawableResId: Int = R.drawable.ic_assistant,
+    @DrawableRes resIdSmallIcon: Int = R.drawable.ic_assistant
 ) {
 
     with(NotificationManagerCompat.from(this)) {
 
         val notificationIntent = Intent(applicationContext, DetailActivity::class.java).apply {
             if(shouldIntentNewTask) {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
         }
 
@@ -64,25 +74,31 @@ fun Context.showOrUpdateNotification(
             applicationContext,
             0,
             notificationIntent,
-            0
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = buildNotificationManager(
-            channelId = channelId
+            channelId = channelId,
+            resIdSmallIcon = resIdSmallIcon
         ).apply {
             setContentTitle(title)
             setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             if(shouldLaunchIntent) {
                 setContentIntent(pendingIntent)
                 addAction(
-                    R.drawable.ic_assistant,
-                    getString(R.string.notification_button),
+                    actionDrawableResId,
+                    actionLabelText ?: getString(R.string.notification_default_button),
                     pendingIntent
                 )
             }
             if (shouldTrackProgress) {
                 setProgress(0, 0, true)
                 setContentText(getString(R.string.notification_download_in_progress))
+            } else {
+                contentText?.let {
+                    setContentText(it)
+                }
             }
         }.build()
 
@@ -94,7 +110,7 @@ fun Context.buildNotificationManager(
     channelId: String,
     shouldAutoCancel: Boolean = true,
     shouldAlertOnlyOnce: Boolean = true,
-    resIdSmallIcon: Int = R.drawable.ic_assistant,
+    @DrawableRes resIdSmallIcon: Int,
     notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
 ) : NotificationCompat.Builder {
 

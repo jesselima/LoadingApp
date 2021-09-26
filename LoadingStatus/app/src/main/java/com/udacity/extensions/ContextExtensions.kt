@@ -14,7 +14,7 @@ private const val TOAST_X_OFF_SET = 0
 
 fun Context.showCustomToast(
     toastType: ToastType = ToastType.SUCCESS,
-    stringResId: Int = R.string.toast_text_success,
+    stringResId: Int = R.string.text_success,
     durationToast: Int = Toast.LENGTH_SHORT
 ) {
 
