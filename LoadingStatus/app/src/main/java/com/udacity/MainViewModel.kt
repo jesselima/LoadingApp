@@ -42,11 +42,10 @@ class MainViewModel(
         )
     }
 
-    fun checkConnectionState() {
-        if (connectionChecker.isConnected().not()) {
+    fun checkConnectionState(isConnected: Boolean) {
+        if (isConnected.not()) {
             _state.value = state.value?.copy(
-                buttonTextResId = R.string.message_connection_error,
-                buttonState = ButtonState.IdleState
+                buttonState = ButtonState.ConnectionError
             )
         }
     }

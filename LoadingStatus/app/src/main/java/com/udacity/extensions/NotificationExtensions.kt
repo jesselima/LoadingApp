@@ -18,6 +18,7 @@ import com.udacity.DetailActivity
 import com.udacity.R
 
 private const val MAX_PROGRESS = 100
+private const val REQUEST_CODE = 0
 
 /**
  * The implementation below is base is this repository where I am the owner:
@@ -75,7 +76,7 @@ fun Context.showOrUpdateNotification(
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             applicationContext,
-            0,
+            REQUEST_CODE,
             notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -97,7 +98,7 @@ fun Context.showOrUpdateNotification(
                 )
             }
             if (shouldTrackProgress) {
-                setProgress(100, progress, true)
+                setProgress(MAX_PROGRESS, progress, true)
             }
             contentText?.let {
                 setContentText(it)

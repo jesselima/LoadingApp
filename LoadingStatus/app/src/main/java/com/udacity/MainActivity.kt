@@ -5,25 +5,25 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.udacity.core.ConnectivityReceiver
 import com.udacity.core.FileTypeValue
 import com.udacity.core.NotificationKeys
 import com.udacity.core.connectionchecker.ConnectionChecker
 import com.udacity.databinding.ActivityMainBinding
-import com.udacity.extensions.ToastType
-import com.udacity.extensions.removeAllNotifications
-import com.udacity.extensions.showCustomToast
-import com.udacity.extensions.showOrUpdateNotification
+import com.udacity.extensions.*
 import com.udacity.widgets.ButtonState
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener  {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModel()
@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
     private var downloadManager: DownloadManager? = null
     private var notificationInfo = NotificationInfo()
     private var lastDownloadId: Long = -1
+
+    private val connectivityReceiver = ConnectivityReceiver()
+
     private val onDownloadCompleteReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -48,16 +51,28 @@ class MainActivity : AppCompatActivity() {
             if (isDownloadCompleted) {
                 val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                 id?.let { receivedId ->
-                    if (receivedId == lastDownloadId) viewModel.setStateSuccess()
-                    context?.showOrUpdateNotification(
-                        notificationId = NotificationKeys.NOTIFICATION_ID,
-                        title = notificationInfo.title,
-                        text = resultTextResId,
-                        contentText = notificationInfo.description,
-                        shouldTrackProgress = false,
-                        shouldIntentNewTask = true,
-                        actionLabelText = getString(notificationInfo.actionLabelStrRes)
-                    )
+                    if (receivedId == lastDownloadId) {
+                        viewModel.setStateSuccess()
+                        showCustomToast(
+                            toastType = ToastType.SUCCESS,
+                            stringResId = R.string.text_success
+                        )
+                        context?.showOrUpdateNotification(
+                            notificationId = NotificationKeys.NOTIFICATION_ID,
+                            title = notificationInfo.title,
+                            text = resultTextResId,
+                            contentText = notificationInfo.description,
+                            shouldTrackProgress = false,
+                            shouldIntentNewTask = true,
+                            actionLabelText = getString(notificationInfo.actionLabelStrRes)
+                        )
+                    } else {
+                        viewModel.setStateError()
+                        showCustomToast(
+                            toastType = ToastType.WARNING,
+                            stringResId = R.string.text_download_failed
+                        )
+                    }
                 }
             }
         }
@@ -73,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         registerReceiver(onDownloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }
 
     private fun setupListeners() {
@@ -112,10 +128,21 @@ class MainActivity : AppCompatActivity() {
         viewModel.state.observe(this, { state ->
             binding.loadingButtonView.buttonState = state.buttonState
             binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
+
+            // Todo
+            //  - Use of "when"
+            //  incorporate circleLoadingIndicator- I
             if (state.buttonState == ButtonState.Loading) {
                 binding.circleLoadingIndicator.startAnimation()
             } else {
                 binding.circleLoadingIndicator.stopAnimation()
+            }
+            if (state.buttonState == ButtonState.ConnectionError) {
+                showCustomToast(
+                    toastType = ToastType.WARNING,
+                    stringResId = R.string.message_connection_error,
+                    durationToast = Toast.LENGTH_LONG
+                )
             }
         })
     }
@@ -188,6 +215,17 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(onDownloadCompleteReceiver)
+        unregisterReceiver(connectivityReceiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ConnectivityReceiver.connectivityReceiverListener = this
+        viewModel.checkConnectionState(applicationContext.isConnected())
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        viewModel.checkConnectionState(isConnected)
     }
 }
 
