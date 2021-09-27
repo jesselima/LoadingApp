@@ -51,17 +51,10 @@ class MainViewModel(
         }
     }
 
-    fun setDownloadResultState(downloadSuccess: Boolean) {
-        if (downloadSuccess) {
-            _state.value = state.value?.copy(
-                buttonTextResId = R.string.button_text_completed,
-                buttonState = ButtonState.Success
-            )
-        } else {
-            _state.value = state.value?.copy(
-                buttonTextResId = R.string.button_text_error,
-                buttonState = ButtonState.Error
-            )
-        }
+    fun setStateSuccess() {
+        _state.value = state.value?.copy(
+            buttonTextResId = R.string.button_text_completed,
+            buttonState = ButtonState.Success
+        )
     }
 }

@@ -17,6 +17,7 @@ import androidx.core.os.bundleOf
 import com.udacity.DetailActivity
 import com.udacity.R
 
+private const val MAX_PROGRESS = 100
 
 /**
  * The implementation below is base is this repository where I am the owner:
@@ -59,7 +60,9 @@ fun Context.showOrUpdateNotification(
     actionLabelText: String? = null,
     contentText: String? = null,
     @DrawableRes actionDrawableResId: Int = R.drawable.ic_assistant,
-    @DrawableRes resIdSmallIcon: Int = R.drawable.ic_assistant
+    @DrawableRes resIdSmallIcon: Int = R.drawable.ic_assistant,
+    progress: Int = 0,
+    shouldAutoCancel: Boolean = true
 ) {
 
     with(NotificationManagerCompat.from(this)) {
@@ -79,7 +82,8 @@ fun Context.showOrUpdateNotification(
 
         val notification = buildNotificationManager(
             channelId = channelId,
-            resIdSmallIcon = resIdSmallIcon
+            resIdSmallIcon = resIdSmallIcon,
+            shouldAutoCancel = shouldAutoCancel
         ).apply {
             setContentTitle(title)
             setStyle(NotificationCompat.BigTextStyle().bigText(text))
@@ -93,12 +97,10 @@ fun Context.showOrUpdateNotification(
                 )
             }
             if (shouldTrackProgress) {
-                setProgress(0, 0, true)
-                setContentText(getString(R.string.notification_download_in_progress))
-            } else {
-                contentText?.let {
-                    setContentText(it)
-                }
+                setProgress(100, progress, true)
+            }
+            contentText?.let {
+                setContentText(it)
             }
         }.build()
 
@@ -111,7 +113,7 @@ fun Context.buildNotificationManager(
     shouldAutoCancel: Boolean = true,
     shouldAlertOnlyOnce: Boolean = true,
     @DrawableRes resIdSmallIcon: Int,
-    notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT
+    notificationPriority: Int = NotificationCompat.PRIORITY_DEFAULT,
 ) : NotificationCompat.Builder {
 
     /**

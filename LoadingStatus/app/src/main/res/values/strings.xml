@@ -11,7 +11,7 @@
     <string name="message_connection_error">Ooops! Device not connected!</string>
 
     <string name="text_success">Success</string>
-    <string name="text_download_success">Download success</string>
+    <string name="text_download_success">Downloaded</string>
     <string name="text_download_failed">Download failed</string>
 
     <string name="notification_title">Udacity: Android Kotlin Nanodegree </string>

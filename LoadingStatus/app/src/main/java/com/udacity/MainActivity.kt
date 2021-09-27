@@ -15,6 +15,7 @@ import com.udacity.core.NotificationKeys
 import com.udacity.core.connectionchecker.ConnectionChecker
 import com.udacity.databinding.ActivityMainBinding
 import com.udacity.extensions.ToastType
+import com.udacity.extensions.removeAllNotifications
 import com.udacity.extensions.showCustomToast
 import com.udacity.extensions.showOrUpdateNotification
 import com.udacity.widgets.ButtonState
@@ -30,22 +31,24 @@ class MainActivity : AppCompatActivity() {
 
     private var downloadManager: DownloadManager? = null
     private var notificationInfo = NotificationInfo()
-    private var lastDownload: Long = -1
-
+    private var lastDownloadId: Long = -1
     private val onDownloadCompleteReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             val isDownloadCompleted = intent?.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE
+
             val resultTextResId = if (isDownloadCompleted) {
+                viewModel.setStateSuccess()
                 getString(R.string.text_download_success)
             } else {
+                viewModel.setStateError()
                 getString(R.string.text_download_failed)
             }
+
             if (isDownloadCompleted) {
                 val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                 id?.let { receivedId ->
-                    val isDownloadSuccess = receivedId == lastDownload
-                    viewModel.setDownloadResultState(isDownloadSuccess)
+                    if (receivedId == lastDownloadId) viewModel.setStateSuccess()
                     context?.showOrUpdateNotification(
                         notificationId = NotificationKeys.NOTIFICATION_ID,
                         title = notificationInfo.title,
@@ -55,9 +58,7 @@ class MainActivity : AppCompatActivity() {
                         shouldIntentNewTask = true,
                         actionLabelText = getString(notificationInfo.actionLabelStrRes)
                     )
-                } ?: viewModel.setStateError()
-            } else {
-                viewModel.setStateError()
+                }
             }
         }
     }
@@ -79,13 +80,13 @@ class MainActivity : AppCompatActivity() {
             if (connectionChecker.isConnected().not()) {
                 showCustomToast(
                     toastType = ToastType.WARNING,
-                    R.string.message_connection_error
+                    stringResId = R.string.message_connection_error
                 )
             } else {
                 if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
                     showCustomToast(
                         toastType = ToastType.INFO,
-                        R.string.message_alert_select_download_type
+                        stringResId = R.string.message_alert_select_download_type
                     )
                 } else {
                     setNotificationInfoAndDownload()
@@ -120,6 +121,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNotificationInfoAndDownload() {
+        applicationContext?.removeAllNotifications()
+        viewModel.setStateLoading()
         when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
             R.id.radioButtonGlide -> {
                 notificationInfo = NotificationInfo(
@@ -163,19 +166,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        viewModel.setStateLoading()
+
         val downloadRequest = DownloadManager.Request(Uri.parse(notificationInfo.source))
-            .setTitle(getString(R.string.app_name))
-            .setDescription(
-                getString(R.string.notification_downloading)
-                    .plus(" ${notificationInfo.title} - ${notificationInfo.description}")
-            )
             .setRequiresCharging(false)
             .setAllowedOverMetered(true)
             .setAllowedOverRoaming(true)
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE)
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS,
                 "${notificationInfo.title}${notificationInfo.fileExtension}"
@@ -183,7 +181,7 @@ class MainActivity : AppCompatActivity() {
 
         downloadManager?.let {
             // enqueue puts the download request in the queue.
-            lastDownload = it.enqueue(downloadRequest)
+            lastDownloadId = it.enqueue(downloadRequest)
         }
     }
 
