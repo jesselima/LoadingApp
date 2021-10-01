@@ -19,4 +19,31 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Hello" />
 
+    <Button
+        android:id="@+id/buttonOpenDownloadsFolder"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height_default"
+        android:layout_marginBottom="16dp"
+        android:text="@string/open_downloads_folder"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGoBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <Button
+        android:id="@+id/buttonGoBack"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/text_go_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

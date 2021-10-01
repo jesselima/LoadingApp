@@ -15,4 +15,5 @@
     <dimen name="spacing_md">16dp</dimen>
     <dimen name="spacing_lg">20dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="button_height_default">60dp</dimen>
 </resources>

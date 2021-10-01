@@ -1,5 +1,7 @@
 package com.udacity
 
+import android.app.DownloadManager
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -12,24 +14,23 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityDetailBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-        setContentView(R.layout.activity_detail)
-        setSupportActionBar(binding.toolbar)
-       
+        setContentView(binding.root)
         val result: Boolean? = intent?.extras?.getBoolean(NotificationKeys.KEY_RESULT)
         val source: String? = intent?.extras?.getString(NotificationKeys.KEY_SOURCE)
 
         Log.d("===>>>", result.toString())
         Log.d("===>>>", source.toString())
 
+        setupListeners()
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        finish()
-        return true
+    private fun setupListeners() {
+        binding.content.buttonOpenDownloadsFolder.setOnClickListener {
+            startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
+        }
+        binding.content.buttonGoBack.setOnClickListener {
+            finish()
+        }
     }
 }

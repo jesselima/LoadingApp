@@ -49,4 +49,6 @@
     <string name="url_retrofit_repository">https://github.com/square/retrofit/archive/refs/heads/master.zip</string>
     <string name="url_sample_video">http://jesselima-tech.umbler.net/videos/relive-ride-to-ST-50km-LQ.mp4</string>
     <string name="download_status">Download status</string>
+    <string name="open_downloads_folder">OPEN DOWNLOADS FOLDER</string>
+    <string name="text_go_back">GO BACK</string>
 </resources>
