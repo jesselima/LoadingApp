@@ -1,6 +1,7 @@
 package com.udacity.extensions
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -58,20 +59,25 @@ fun Context.showOrUpdateNotification(
     shouldLaunchIntent: Boolean = true,
     shouldIntentNewTask: Boolean = false,
     shouldTrackProgress: Boolean = false,
+    shouldAutoCancel: Boolean = true,
     actionLabelText: String? = null,
     contentText: String? = null,
     @DrawableRes actionDrawableResId: Int = R.drawable.ic_assistant,
     @DrawableRes resIdSmallIcon: Int = R.drawable.ic_assistant,
     progress: Int = 0,
-    shouldAutoCancel: Boolean = true
+    data: Bundle? = null
 ) {
 
     with(NotificationManagerCompat.from(this)) {
 
         val notificationIntent = Intent(applicationContext, DetailActivity::class.java).apply {
             if(shouldIntentNewTask) {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
+        }
+
+        data?.let {
+            notificationIntent.putExtras(it)
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(

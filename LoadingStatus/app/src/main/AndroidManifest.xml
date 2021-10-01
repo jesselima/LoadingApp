@@ -18,6 +18,7 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/download_status"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".MainActivity"

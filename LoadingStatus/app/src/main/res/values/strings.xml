@@ -45,8 +45,8 @@
     <string name="message_alert_select_download_type">Please, select a file to download</string>
 
     <string name="url_glide_repository">https://github.com/bumptech/glide/archive/refs/heads/master.zip</string>
-    <string name="url_load_app_repository">https://github.com/square/retrofit/archive/refs/heads/master.zip</string>
-    <string name="url_retrofit_repository">https://github.com/jesselima/LoadingApp/archive/refs/heads/master.zip</string>
+    <string name="url_load_app_repository">https://github.com/jesselima/LoadingApp/archive/refs/heads/master.zip</string>
+    <string name="url_retrofit_repository">https://github.com/square/retrofit/archive/refs/heads/master.zip</string>
     <string name="url_sample_video">http://jesselima-tech.umbler.net/videos/relive-ride-to-ST-50km-LQ.mp4</string>
     <string name="download_status">Download status</string>
 </resources>

@@ -12,6 +12,7 @@ import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.udacity.core.ConnectivityReceiver
 import com.udacity.core.FileTypeValue
 import com.udacity.core.NotificationKeys
@@ -64,7 +65,12 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                             contentText = notificationInfo.description,
                             shouldTrackProgress = false,
                             shouldIntentNewTask = true,
-                            actionLabelText = getString(notificationInfo.actionLabelStrRes)
+                            shouldLaunchIntent = true,
+                            actionLabelText = getString(notificationInfo.actionLabelStrRes),
+                            data = bundleOf(
+                                Pair(NotificationKeys.KEY_RESULT, true),
+                                Pair(NotificationKeys.KEY_SOURCE, notificationInfo.source),
+                            )
                         )
                     } else {
                         viewModel.setStateError()
