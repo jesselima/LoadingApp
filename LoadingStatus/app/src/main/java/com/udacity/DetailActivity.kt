@@ -3,10 +3,11 @@ package com.udacity
 import android.app.DownloadManager
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.udacity.core.NotificationKeys
 import com.udacity.databinding.ActivityDetailBinding
+
+private const val EMPTY = ""
 
 class DetailActivity : AppCompatActivity() {
 
@@ -16,13 +17,17 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val result: Boolean? = intent?.extras?.getBoolean(NotificationKeys.KEY_RESULT)
-        val source: String? = intent?.extras?.getString(NotificationKeys.KEY_SOURCE)
-
-        Log.d("===>>>", result.toString())
-        Log.d("===>>>", source.toString())
-
         setupListeners()
+        setupViews()
+    }
+
+    private fun setupViews() {
+        binding.content.textStatus.text =
+            intent?.extras?.getString(NotificationKeys.KEY_RESULT, EMPTY)
+        binding.content.textFileName.text =
+            intent?.extras?.getString(NotificationKeys.KEY_FILE_NAME, EMPTY)
+        binding.content.textSource.text =
+            intent?.extras?.getString(NotificationKeys.KEY_SOURCE, EMPTY)
     }
 
     private fun setupListeners() {

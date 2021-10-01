@@ -68,7 +68,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                             shouldLaunchIntent = true,
                             actionLabelText = getString(notificationInfo.actionLabelStrRes),
                             data = bundleOf(
-                                Pair(NotificationKeys.KEY_RESULT, true),
+                                Pair(NotificationKeys.KEY_RESULT, getString(R.string.text_success)),
+                                Pair(NotificationKeys.KEY_FILE_NAME, notificationInfo.title),
                                 Pair(NotificationKeys.KEY_SOURCE, notificationInfo.source),
                             )
                         )
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
         setupListeners()
         setupObservers()
+
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         registerReceiver(onDownloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
@@ -137,7 +139,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
             // Todo
             //  - Use of "when"
-            //  incorporate circleLoadingIndicator- I
+            //  - Incorporate circleLoadingIndicator in the ButtonView
             if (state.buttonState == ButtonState.Loading) {
                 binding.circleLoadingIndicator.startAnimation()
             } else {

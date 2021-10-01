@@ -51,4 +51,7 @@
     <string name="download_status">Download status</string>
     <string name="open_downloads_folder">OPEN DOWNLOADS FOLDER</string>
     <string name="text_go_back">GO BACK</string>
+    <string name="label_file_name">File name:</string>
+    <string name="label_status">Status</string>
+    <string name="label_source">Source</string>
 </resources>
