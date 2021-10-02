@@ -1,5 +1,6 @@
 package com.udacity
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -23,6 +25,8 @@ import com.udacity.widgets.ButtonState
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+private const val REQUEST_CODE = 101
+private const val INVALID_RESULT = -1L
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener  {
 
@@ -32,12 +36,10 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private var downloadManager: DownloadManager? = null
     private var notificationInfo = NotificationInfo()
-    private var lastDownloadId: Long = -1
-
+    private var lastDownloadId: Long = INVALID_RESULT
     private val connectivityReceiver = ConnectivityReceiver()
 
     private val onDownloadCompleteReceiver = object : BroadcastReceiver() {
-
         override fun onReceive(context: Context?, intent: Intent?) {
             val isDownloadCompleted = intent?.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE
 
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
 
             if (isDownloadCompleted) {
-                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, INVALID_RESULT)
                 id?.let { receivedId ->
                     if (receivedId == lastDownloadId) {
                         viewModel.setStateSuccess()
@@ -157,7 +159,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private fun setNotificationInfoAndDownload() {
         applicationContext?.removeAllNotifications()
-        viewModel.setStateLoading()
         when(binding.radioGroupDownloadOptions.checkedRadioButtonId) {
             R.id.radioButtonGlide -> {
                 notificationInfo = NotificationInfo(
@@ -166,7 +167,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     fileExtension = FileTypeValue.ZIP.value,
                     source = getString(R.string.url_glide_repository)
                 )
-                download()
+                checkPermissionsAndStartDownload()
             }
             R.id.radioButtonRepository -> {
                 notificationInfo = NotificationInfo(
@@ -175,7 +176,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     fileExtension = FileTypeValue.ZIP.value,
                     source = getString(R.string.url_load_app_repository)
                 )
-                download()
+                checkPermissionsAndStartDownload()
             }
             R.id.radioButtonRetrofit -> {
                 notificationInfo = NotificationInfo(
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     fileExtension = FileTypeValue.ZIP.value,
                     source = getString(R.string.url_retrofit_repository)
                 )
-                download()
+                checkPermissionsAndStartDownload()
             }
             R.id.radioButtonSampleVideo -> {
                 notificationInfo = NotificationInfo(
@@ -193,17 +194,16 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     fileExtension = FileTypeValue.MP4.value,
                     source = getString(R.string.url_sample_video),
                 )
-                download()
+                checkPermissionsAndStartDownload()
             }
             // Todo check inf the input has a valid URL
             //  if not, show toast. if yes try to download.
         }
     }
 
-    private fun download() {
-
+    private fun startDownload() {
+        viewModel.setStateLoading()
         val downloadRequest = DownloadManager.Request(Uri.parse(notificationInfo.source))
-            .setRequiresCharging(false)
             .setAllowedOverMetered(true)
             .setAllowedOverRoaming(true)
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
@@ -212,11 +212,40 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             .setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS,
                 "${notificationInfo.title}${notificationInfo.fileExtension}"
-            )
+            ).apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    setRequiresCharging(false)
+                }
+            }
 
         downloadManager?.let {
             // enqueue puts the download request in the queue.
             lastDownloadId = it.enqueue(downloadRequest)
+        }
+    }
+
+    private fun checkPermissionsAndStartDownload() {
+        if (isPermissionNotGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestWriteExternalStoragePermission(REQUEST_CODE)
+        } else {
+            startDownload()
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE && grantResults.first() == INVALID_RESULT.toInt())  {
+            showCustomToast(
+                stringResId = R.string.message_external_storage_permission_error,
+                toastType = ToastType.WARNING,
+                durationToast = Toast.LENGTH_LONG
+            )
+            viewModel.setStateIdle()
+        } else {
+            startDownload()
         }
     }
 
@@ -236,11 +265,3 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         viewModel.checkConnectionState(isConnected)
     }
 }
-
-data class NotificationInfo(
-    val title: String = "",
-    val description: String = "",
-    val source: String = "",
-    val fileExtension: String = "",
-    val actionLabelStrRes: Int = R.string.notification_default_button
-)

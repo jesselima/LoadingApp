@@ -1,11 +1,15 @@
 package com.udacity.extensions
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.udacity.R
 import com.udacity.databinding.CustomToastBinding
 
@@ -60,4 +64,21 @@ fun Context.isConnected(): Boolean {
         isConnectingOrConnected -> true
         else -> false
     }
+}
+
+fun Context.isPermissionNotGranted(permission: String): Boolean {
+    return ActivityCompat.checkSelfPermission(
+        this,
+        permission
+    ) != PackageManager.PERMISSION_GRANTED
+}
+
+fun Activity.requestWriteExternalStoragePermission(requestCode: Int) {
+    ActivityCompat.requestPermissions(
+        this,
+        arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        ),
+        requestCode
+    )
 }
