@@ -42,45 +42,51 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private val onDownloadCompleteReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isDownloadCompleted = intent?.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE
-
-            val resultTextResId = if (isDownloadCompleted) {
-                viewModel.setStateSuccess()
-                getString(R.string.text_download_success)
-            } else {
-                viewModel.setStateError()
-                getString(R.string.text_download_failed)
-            }
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, INVALID_RESULT)
 
             if (isDownloadCompleted) {
-                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, INVALID_RESULT)
-                id?.let { receivedId ->
-                    if (receivedId == lastDownloadId) {
-                        viewModel.setStateSuccess()
-                        showCustomToast(
-                            toastType = ToastType.SUCCESS,
-                            stringResId = R.string.text_success
-                        )
-                        context?.showOrUpdateNotification(
-                            notificationId = NotificationKeys.NOTIFICATION_ID,
-                            title = notificationInfo.title,
-                            text = resultTextResId,
-                            contentText = notificationInfo.description,
-                            shouldTrackProgress = false,
-                            shouldIntentNewTask = true,
-                            shouldLaunchIntent = true,
-                            actionLabelText = getString(notificationInfo.actionLabelStrRes),
-                            data = bundleOf(
-                                Pair(NotificationKeys.KEY_RESULT, getString(R.string.text_success)),
-                                Pair(NotificationKeys.KEY_FILE_NAME, notificationInfo.title),
-                                Pair(NotificationKeys.KEY_SOURCE, notificationInfo.source),
+                val downloadCursor = downloadManager?.query(DownloadManager.Query().setFilterById(lastDownloadId))
+                downloadCursor?.let { cursor ->
+                    if (cursor.moveToFirst()) {
+                        when(cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                            DownloadManager.STATUS_FAILED -> {
+                                showCustomToast(
+                                    toastType = ToastType.ERROR,
+                                    stringResId = R.string.message_download_error,
+                                )
+                                viewModel.setStateError()
+                                notificationInfo.downloadResult = getString(R.string.text_download_failed)
+                                notificationInfo.isFailure = true
+                            }
+                            DownloadManager.STATUS_SUCCESSFUL -> {
+                                showCustomToast(
+                                    toastType = ToastType.SUCCESS,
+                                    stringResId = R.string.text_success
+                                )
+                                viewModel.setStateSuccess()
+                                notificationInfo.downloadResult = getString(R.string.text_download_success)
+                                notificationInfo.isFailure = false
+                            }
+                        }
+
+                        if (id == lastDownloadId) {
+                            context?.showOrUpdateNotification(
+                                notificationId = NotificationKeys.NOTIFICATION_ID,
+                                title = notificationInfo.title,
+                                text = notificationInfo.downloadResult,
+                                contentText = notificationInfo.description,
+                                shouldTrackProgress = false,
+                                shouldIntentNewTask = true,
+                                shouldLaunchIntent = true,
+                                actionLabelText = getString(notificationInfo.actionLabelStrRes),
+                                data = bundleOf(
+                                    Pair(NotificationKeys.KEY_RESULT, notificationInfo.downloadResult),
+                                    Pair(NotificationKeys.KEY_IS_FAILURE, notificationInfo.isFailure),
+                                    Pair(NotificationKeys.KEY_FILE_NAME, notificationInfo.title),
+                                    Pair(NotificationKeys.KEY_SOURCE, notificationInfo.source),
+                                )
                             )
-                        )
-                    } else {
-                        viewModel.setStateError()
-                        showCustomToast(
-                            toastType = ToastType.WARNING,
-                            stringResId = R.string.text_download_failed
-                        )
+                        }
                     }
                 }
             }

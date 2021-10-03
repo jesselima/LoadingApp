@@ -9,6 +9,7 @@
     <string name="button_text_idle">Select an option</string>
     <string name="button_text_download">Download</string>
     <string name="message_connection_error">Ooops! Device not connected!</string>
+    <string name="message_download_error">Download failed!</string>
 
     <string name="text_success">Success</string>
     <string name="text_download_success">Downloaded</string>
@@ -16,7 +17,7 @@
 
     <string name="notification_title">Udacity: Android Kotlin Nanodegree </string>
     <string name="notification_description">The Project 3 repository is downloaded</string>
-    <string name="notification_default_button">Check status</string>
+    <string name="notification_default_button">Check download status</string>
     <string name="notification_download_in_progress">Download in progress</string>
     <string name="notification_downloading">Downloading</string>
 
