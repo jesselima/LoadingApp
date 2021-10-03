@@ -8,6 +8,7 @@
     <string name="button_text_error">Ooops!</string>
     <string name="button_text_idle">Select an option</string>
     <string name="button_text_download">Download</string>
+    <string name="button_text_paste_your_url">Please, provide your URL</string>
     <string name="message_connection_error">Ooops! Device not connected!</string>
     <string name="message_download_error">Download failed!</string>
 
@@ -39,8 +40,12 @@
     <string name="label_radio_retrofit">Retrofit - Type-safe HTTP client for Android</string>
 
     <string name="label_video_title">Video</string>
-    <string name="label_video_description">Video MP4 format</string>
+    <string name="label_video_description">Sample Video MP4 format</string>
     <string name="label_video_retrofit">Video - MP4 format</string>
+
+    <string name="label_custom_url_title">Custom</string>
+    <string name="label_custom_url_description">Use custom url</string>
+    <string name="label_custom_url">Custom - Custom file download</string>
 
     <string name="label_radio_video_title">Video MP4 format</string>
     <string name="message_alert_select_download_type">Please, select a file to download</string>
@@ -56,4 +61,10 @@
     <string name="label_status">Status:</string>
     <string name="label_source">Source:</string>
     <string name="message_external_storage_permission_error">We need your external storage permission to save downloaded files.</string>
+    <string name="dummy_custom_url">https://example.com/some-file.zip</string>
+    <string name="message_invalid_url">Invalid url</string>
+    <string name="message_invalid_custom_url">Please, Check you custom URL</string>
+    <string name="message_too_long_url">The URL too long</string>
+    <string name="message_too_short_url">The URL too short</string>
+    <string name="message_url_without_file_extension">The URL does not seems to point to a file</string>
 </resources>

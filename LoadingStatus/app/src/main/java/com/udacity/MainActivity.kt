@@ -11,10 +11,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import com.udacity.core.ConnectivityReceiver
 import com.udacity.core.FileTypeValue
 import com.udacity.core.NotificationKeys
@@ -27,6 +29,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val REQUEST_CODE = 101
 private const val INVALID_RESULT = -1L
+private const val MIN_INPUT_URL_LENGTH = 7
+private const val MAX_INPUT_URL_LENGTH = 1000
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener  {
 
@@ -115,22 +119,68 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     stringResId = R.string.message_connection_error
                 )
             } else {
-                if (binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID) {
-                    showCustomToast(
-                        toastType = ToastType.INFO,
-                        stringResId = R.string.message_alert_select_download_type
-                    )
-                } else {
-                    setNotificationInfoAndDownload()
+                when {
+                    binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID -> {
+                        showCustomToast(
+                            toastType = ToastType.INFO,
+                            stringResId = R.string.message_alert_select_download_type
+                        )
+                    }
+                    binding.textInputLayoutCustomUrl.isErrorEnabled -> {
+                        showCustomToast(
+                            toastType = ToastType.INFO,
+                            stringResId = R.string.message_invalid_custom_url
+                        )
+                    }
+                    else -> {
+                        setNotificationInfoAndDownload()
+                    }
+                }
+            }
+        }
+
+        binding.textInputLayoutCustomUrl.editText?.doOnTextChanged { inputTextValue, _, _, _ ->
+            with(binding) {
+                inputTextValue?.let { url ->
+                    textInputLayoutCustomUrl.isErrorEnabled = true
+                    if(url.length > MIN_INPUT_URL_LENGTH) {
+                        val errorMessage: String? = when {
+                            url.length > MAX_INPUT_URL_LENGTH -> {
+                                getString(R.string.message_too_long_url)
+                            }
+                            Patterns.WEB_URL.matcher(url).matches().not() -> {
+                                getString(R.string.message_invalid_url)
+                            }
+                            else -> {
+                                textInputLayoutCustomUrl.isErrorEnabled = false
+                                loadingButtonView.buttonState = ButtonState.IdleState
+                                loadingButtonView.buttonText = getString(
+                                    R.string.button_text_download
+                                )
+                                null
+                            }
+                        }
+                        textInputLayoutCustomUrl.error = errorMessage
+                    } else {
+                        textInputLayoutCustomUrl.error = getString(R.string.message_too_short_url)
+                    }
                 }
             }
         }
 
         binding.radioGroupDownloadOptions.setOnCheckedChangeListener { _, checkedId ->
+            binding.textInputLayoutCustomUrl.isEnabled = checkedId ==  R.id.radioButtonCustomUrl
             when(checkedId) {
-                R.id.radioButtonGlide, R.id.radioButtonRepository, R.id.radioButtonRetrofit -> {
+                R.id.radioButtonGlide, R.id.radioButtonRepository, R.id.radioButtonRetrofit,
+                    R.id.radioButtonSampleVideo-> {
+                    binding.textInputLayoutCustomUrl.isEnabled = false
                     binding.loadingButtonView.buttonState = ButtonState.IdleState
                     binding.loadingButtonView.buttonText = getString( R.string.button_text_download)
+                }
+                R.id.radioButtonCustomUrl -> {
+                    binding.textInputLayoutCustomUrl.isEnabled = true
+                    binding.loadingButtonView.buttonState = ButtonState.IdleState
+                    binding.loadingButtonView.buttonText = getString( R.string.button_text_paste_your_url)
                 }
                 else -> {
                     binding.loadingButtonView.buttonState = ButtonState.IdleState
@@ -202,8 +252,15 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 )
                 checkPermissionsAndStartDownload()
             }
-            // Todo check inf the input has a valid URL
-            //  if not, show toast. if yes try to download.
+            R.id.radioButtonCustomUrl -> {
+                notificationInfo = NotificationInfo(
+                    title = getString(R.string.label_custom_url_title),
+                    description = getString(R.string.label_custom_url_description),
+                    fileExtension = FileTypeValue.EMPTY.value,
+                    source = binding.textInputLayoutCustomUrl.editText?.text.toString(),
+                )
+                checkPermissionsAndStartDownload()
+            }
         }
     }
 

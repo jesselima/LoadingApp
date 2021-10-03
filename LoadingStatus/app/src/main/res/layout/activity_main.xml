@@ -55,8 +55,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space_screen_default"
-            app:layout_constraintBottom_toTopOf="@+id/loadingButtonView"
-            app:layout_constraintTop_toBottomOf="@+id/view">
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            tools:layout_editor_absoluteX="16dp">
 
             <RadioButton
                 android:id="@+id/radioButtonGlide"
@@ -81,7 +81,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/label_video_description" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCustomUrl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/label_custom_url_description" />
+
         </RadioGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutCustomUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:hint="@string/dummy_custom_url"
+            app:errorEnabled="true"
+            android:enabled="false"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupDownloadOptions">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.udacity.widgets.LoadingButtonView
             android:id="@+id/loadingButtonView"
