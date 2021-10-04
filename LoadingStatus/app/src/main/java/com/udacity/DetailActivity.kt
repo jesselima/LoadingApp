@@ -31,6 +31,7 @@ class DetailActivity : AppCompatActivity() {
             val isFailure = intent?.extras?.getBoolean(
                 NotificationKeys.KEY_IS_FAILURE, false
             ) ?: false
+
             if (isFailure) {
                 textStatus.setTextColor(ContextCompat.getColor(
                     this@DetailActivity,

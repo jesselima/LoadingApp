@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private fun setupListeners() {
         binding.loadingButtonView.setOnClickListener {
+            val checkedId = binding.radioGroupDownloadOptions.checkedRadioButtonId
             if (connectionChecker.isConnected().not()) {
                 showCustomToast(
                     toastType = ToastType.WARNING,
@@ -120,20 +121,23 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 )
             } else {
                 when {
-                    binding.radioGroupDownloadOptions.checkedRadioButtonId == View.NO_ID -> {
+                    checkedId == View.NO_ID -> {
                         showCustomToast(
                             toastType = ToastType.INFO,
                             stringResId = R.string.message_alert_select_download_type
                         )
                     }
-                    binding.textInputLayoutCustomUrl.isErrorEnabled -> {
-                        showCustomToast(
-                            toastType = ToastType.INFO,
-                            stringResId = R.string.message_invalid_custom_url
-                        )
-                    }
                     else -> {
-                        setNotificationInfoAndDownload()
+                        if(checkedId == R.id.radioButtonCustomUrl &&
+                            binding.textInputLayoutCustomUrl.isErrorEnabled) {
+                            showCustomToast(
+                                toastType = ToastType.INFO,
+                                stringResId = R.string.message_invalid_custom_url
+                            )
+                        } else {
+                            setNotificationInfoAndDownload()
+                        }
+
                     }
                 }
             }
@@ -144,6 +148,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 inputTextValue?.let { url ->
                     textInputLayoutCustomUrl.isErrorEnabled = true
                     if(url.length > MIN_INPUT_URL_LENGTH) {
+
                         val errorMessage: String? = when {
                             url.length > MAX_INPUT_URL_LENGTH -> {
                                 getString(R.string.message_too_long_url)
@@ -169,46 +174,51 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
 
         binding.radioGroupDownloadOptions.setOnCheckedChangeListener { _, checkedId ->
-            binding.textInputLayoutCustomUrl.isEnabled = checkedId ==  R.id.radioButtonCustomUrl
-            when(checkedId) {
-                R.id.radioButtonGlide, R.id.radioButtonRepository, R.id.radioButtonRetrofit,
+            with(binding) {
+                textInputLayoutCustomUrl.isEnabled = checkedId ==  R.id.radioButtonCustomUrl
+                when(checkedId) {
+                    R.id.radioButtonGlide, R.id.radioButtonRepository, R.id.radioButtonRetrofit,
                     R.id.radioButtonSampleVideo-> {
-                    binding.textInputLayoutCustomUrl.isEnabled = false
-                    binding.loadingButtonView.buttonState = ButtonState.IdleState
-                    binding.loadingButtonView.buttonText = getString( R.string.button_text_download)
-                }
-                R.id.radioButtonCustomUrl -> {
-                    binding.textInputLayoutCustomUrl.isEnabled = true
-                    binding.loadingButtonView.buttonState = ButtonState.IdleState
-                    binding.loadingButtonView.buttonText = getString( R.string.button_text_paste_your_url)
-                }
-                else -> {
-                    binding.loadingButtonView.buttonState = ButtonState.IdleState
-                    binding.loadingButtonView.buttonText = getString(R.string.button_text_idle)
+                        loadingButtonView.buttonState = ButtonState.IdleState
+                        loadingButtonView.buttonText = getString( R.string.button_text_download)
+                    }
+                    R.id.radioButtonCustomUrl -> {
+                        textInputLayoutCustomUrl.isEnabled = true
+                        loadingButtonView.buttonState = ButtonState.IdleState
+                        loadingButtonView.buttonText =
+                            getString(R.string.button_text_paste_your_url)
+                    }
+                    else -> {
+                        loadingButtonView.buttonState = ButtonState.IdleState
+                        loadingButtonView.buttonText = getString(R.string.button_text_idle)
+                    }
                 }
             }
+
         }
     }
 
     private fun setupObservers() {
         viewModel.state.observe(this, { state ->
-            binding.loadingButtonView.buttonState = state.buttonState
-            binding.loadingButtonView.buttonText = getString(state.buttonTextResId)
+            with(binding) {
+                loadingButtonView.buttonState = state.buttonState
+                loadingButtonView.buttonText = getString(state.buttonTextResId)
 
-            // Todo
-            //  - Use of "when"
-            //  - Incorporate circleLoadingIndicator in the ButtonView
-            if (state.buttonState == ButtonState.Loading) {
-                binding.circleLoadingIndicator.startAnimation()
-            } else {
-                binding.circleLoadingIndicator.stopAnimation()
-            }
-            if (state.buttonState == ButtonState.ConnectionError) {
-                showCustomToast(
-                    toastType = ToastType.WARNING,
-                    stringResId = R.string.message_connection_error,
-                    durationToast = Toast.LENGTH_LONG
-                )
+                // Todo
+                //  - Use of "when"
+                //  - Incorporate circleLoadingIndicator in the ButtonView
+                if (state.buttonState == ButtonState.Loading) {
+                    circleLoadingIndicator.startAnimation()
+                } else {
+                    circleLoadingIndicator.stopAnimation()
+                }
+                if (state.buttonState == ButtonState.ConnectionError) {
+                    showCustomToast(
+                        toastType = ToastType.WARNING,
+                        stringResId = R.string.message_connection_error,
+                        durationToast = Toast.LENGTH_LONG
+                    )
+                }
             }
         })
     }
@@ -256,7 +266,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 notificationInfo = NotificationInfo(
                     title = getString(R.string.label_custom_url_title),
                     description = getString(R.string.label_custom_url_description),
-                    fileExtension = FileTypeValue.EMPTY.value,
+                    fileExtension = null,
                     source = binding.textInputLayoutCustomUrl.editText?.text.toString(),
                 )
                 checkPermissionsAndStartDownload()
@@ -272,13 +282,21 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS,
-                "${notificationInfo.title}${notificationInfo.fileExtension}"
-            ).apply {
+            .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     setRequiresCharging(false)
                 }
+
+                val path = if (notificationInfo?.fileExtension != null) {
+                    "${notificationInfo.title}${notificationInfo.fileExtension}"
+                } else {
+                    notificationInfo.title
+                }
+
+                setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    path
+                )
             }
 
         downloadManager?.let {
