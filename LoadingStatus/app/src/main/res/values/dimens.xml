@@ -4,7 +4,7 @@
     <dimen name="default_text_size">20sp</dimen>
     <dimen name="space_screen_default">16dp</dimen>
     <dimen name="backdrop_background_height">200dp</dimen>
-    <dimen name="icon_size_image_extra_large">150dp</dimen>
+    <dimen name="icon_size_image_extra_large">250dp</dimen>
     <dimen name="margin_button_default">20dp</dimen>
     <dimen name="button_default">60dp</dimen>
     <dimen name="default_circle_loading_size">40dp</dimen>

@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.udacity.core.ConnectivityReceiver
 import com.udacity.core.FileTypeValue
@@ -204,7 +205,11 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
                 if (state.buttonState == ButtonState.Loading) {
                     circleLoadingIndicator.startAnimation()
+                    progressAnimatedDownloading.showWithFadeIn()
+                    progressAnimatedDownloadingAuthor.showWithFadeIn()
                 } else {
+                    progressAnimatedDownloading.hideWithFadeOut()
+                    progressAnimatedDownloadingAuthor.hideWithFadeOut()
                     circleLoadingIndicator.stopAnimation()
                 }
 

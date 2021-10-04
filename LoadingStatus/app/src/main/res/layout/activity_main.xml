@@ -39,16 +39,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView"
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:id="@+id/progressAnimatedDownloadingAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_animation_author_link"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/spacing_tiny"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/progressAnimatedDownloading"
             android:layout_width="@dimen/icon_size_image_extra_large"
             android:layout_height="@dimen/icon_size_image_extra_large"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_cloud_download"
+            android:layout_gravity="center|end"
+            android:visibility="visible"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/cloud_downloading"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            app:layout_constraintTop_toTopOf="@+id/view"/>
 
         <RadioGroup
             android:id="@+id/radioGroupDownloadOptions"
