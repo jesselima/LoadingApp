@@ -29,7 +29,6 @@ class LoadingButtonView @JvmOverloads constructor(
 
     var buttonText: CharSequence = ""
 
-    private var buttonTextColor: Int = 0
     private var buttonBackgroundColor: Int = 0
     private var valueAnimator: ValueAnimator? = null
     private val buttonRect: RectF = RectF(START_LEFT, START_TOP, START_RIGHT, START_BOTTOM)

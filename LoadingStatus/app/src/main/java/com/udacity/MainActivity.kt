@@ -120,8 +120,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     stringResId = R.string.message_connection_error
                 )
             } else {
-                when {
-                    checkedId == View.NO_ID -> {
+                when (checkedId) {
+                    View.NO_ID -> {
                         showCustomToast(
                             toastType = ToastType.INFO,
                             stringResId = R.string.message_alert_select_download_type
@@ -137,7 +137,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         } else {
                             setNotificationInfoAndDownload()
                         }
-
                     }
                 }
             }
@@ -194,7 +193,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     }
                 }
             }
-
         }
     }
 
@@ -204,14 +202,12 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 loadingButtonView.buttonState = state.buttonState
                 loadingButtonView.buttonText = getString(state.buttonTextResId)
 
-                // Todo
-                //  - Use of "when"
-                //  - Incorporate circleLoadingIndicator in the ButtonView
                 if (state.buttonState == ButtonState.Loading) {
                     circleLoadingIndicator.startAnimation()
                 } else {
                     circleLoadingIndicator.stopAnimation()
                 }
+
                 if (state.buttonState == ButtonState.ConnectionError) {
                     showCustomToast(
                         toastType = ToastType.WARNING,
@@ -312,6 +308,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startDownload()
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
